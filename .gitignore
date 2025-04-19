@@ -34,3 +34,27 @@
 # Others
 *.vs/
 *x64/
+
+# Ignore SFML library files
+Searching-Stick/sfml/
+
+# Ignore build artifacts
+Searching-Stick/x64/
+Searching-Stick/bin/
+Searching-Stick/*.vcxproj.user
+Searching-Stick/Debug/
+Searching-Stick/Release/
+
+# Visual Studio temporary files
+*.obj
+*.exe
+*.pdb
+*.ipch
+*.log
+*.tlog
+*.cache
+*.suo
+*.user
+*.VC.db
+*.VC.opendb
+
