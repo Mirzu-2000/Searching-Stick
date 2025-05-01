@@ -1,8 +1,11 @@
 #pragma once
 #include <SFML/System/String.hpp>
+#include "Gameplay/StickCollection/StickModelCollection.h"
+#include "Gameplay/StickCollection/StickCollectionController.h"
 
 namespace Gameplay
 {
+	using namespace Collection;
 
 	class GameplayController;
 
@@ -10,6 +13,7 @@ namespace Gameplay
 	{
 	private:
 		GameplayController* gameplay_controller;
+		StickCollectionController* collection_controller;
 
 	public:
 		GameplayService();
@@ -21,7 +25,11 @@ namespace Gameplay
 
 		void reset();
 
+		void searchElement(Collection::SearchType search_type);
 
+		Collection::SearchType getCurrentSearchType();
+
+		int getNumberOfSticks();
 
 	};
 
