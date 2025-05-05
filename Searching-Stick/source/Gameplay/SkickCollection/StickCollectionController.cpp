@@ -3,6 +3,7 @@
 #include "Gameplay//StickCollection/StickCollectionView.h"
 #include "Gameplay/StickCollection/Stick.h"
 #include "Gameplay/GameplayService.h"
+#include "Sound/SoundService.h"
 #include "Global/ServiceLocator.h"
 #include <iostream>
 #include <random>
@@ -85,15 +86,37 @@ namespace Gameplay
 				{
 					stick_to_search->stick_view->setFillColor(collection_model->found_element_color);
 					stick_to_search = nullptr;
+					std::cout << "Found stick" << std::endl;
 					return;
 				}
 				else
 				{
+					// sets the fill color of the current stick's view to the processing_element_color; meaning the stick is still being checked
 					sticks[i]->stick_view->setFillColor(collection_model->processing_element_color);
+
+					//pauses the thread for a small duration to show the searching operation
+					std::this_thread::sleep_for(std::chrono::milliseconds(current_operation_delay));
+
+					// sets the fill color of the current stick's view back to the default element_color after the pause.
 					sticks[i]->stick_view->setFillColor(collection_model->element_color);
+					std::cout << "Found not stick" << std::endl;
+
 				}
 
 			}
+		}
+
+		void StickCollectionController::processSearchThreadState()
+		{
+			if (search_thread.joinable() && stick_to_search == nullptr)
+			{
+				joinThreads();
+			}
+		}
+
+		void StickCollectionController::joinThreads()
+		{
+			search_thread.join();
 		}
 
 
@@ -144,6 +167,7 @@ namespace Gameplay
 
 		void Gameplay::Collection::StickCollectionController::destroy()
 		{
+			if (search_thread.joinable()) search_thread.join();
 
 			for (int i = 0; i < sticks.size(); i++) delete(sticks[i]);
 			sticks.clear();
@@ -167,12 +191,17 @@ namespace Gameplay
 		void Gameplay::Collection::StickCollectionController::initialize()
 		{
 
+			collection_model->initialize();
 			initializeSticks();
+
 			reset();
 		}
 
 		void Gameplay::Collection::StickCollectionController::update()
 		{
+			processSearchThreadState();
+
+			collection_view->update();
 
 			for (int i = 0; i < sticks.size(); i++)
 				sticks[i]->stick_view->update();
@@ -180,12 +209,16 @@ namespace Gameplay
 
 		void StickCollectionController::render()
 		{
+			collection_view->render();
+
 			for (int i = 0; i < sticks.size(); i++)
 				sticks[i]->stick_view->render();
 		}
 
 		void StickCollectionController::reset()
 		{
+			current_operation_delay = 0;
+
 			shuffleSticks();
 			updateSticksPosition();
 			resetSticksColor();
@@ -202,8 +235,12 @@ namespace Gameplay
 			{
 			case Gameplay::Collection::SearchType::LINEAR_SEARCH:
 
-				processLinearSearch();
+				//processLinearSearch();
+				current_operation_delay = collection_model->linear_search_delay;
 
+				// a new thread, 'search_thread' is created to execute the 'processLinearSearch'
+		// 'this' keyword is passed to provide the context of the current 'StickCollectionContoller' object, allowing 'processLinearSearch' to access its data
+				search_thread = std::thread(&StickCollectionController::processLinearSearch, this);
 				break;
 			}
 
