@@ -29,6 +29,9 @@ namespace Gameplay
 			int number_of_comparisons;
 			int number_of_array_access;
 			int current_operation_delay;
+			int delay_in_ms;
+
+			sf::String time_complexity;
 
 			std::thread search_thread;
 
@@ -74,7 +77,7 @@ namespace Gameplay
 			int getNumberOfArrayAccess();
 			int getDelayMilliseconds();
 		
-
+			sf::String getTimeComplexity();
 		};
 
 	}
