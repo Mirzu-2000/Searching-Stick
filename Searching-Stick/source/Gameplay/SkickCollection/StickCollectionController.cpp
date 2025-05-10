@@ -215,6 +215,10 @@ namespace Gameplay {
 				current_operation_delay = collection_model->linear_search_delay;
 				search_thread = std::thread(&StickCollectionController::processLinearSearch, this);
 				break;
+
+				default:
+
+					break;
 			}
 		}
 
