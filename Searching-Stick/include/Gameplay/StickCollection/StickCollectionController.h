@@ -36,9 +36,13 @@ namespace Gameplay
 			std::thread search_thread;
 
 			void initializeSticks();
-			void shuffleSticks();
-			float calculateStickWidth();
 
+			void shuffleSticks();
+			void sortElements();
+			bool compareElementsByData(const Stick* a, const Stick* b) const;
+			
+			
+			float calculateStickWidth();
 			void updateSticksPosition();
 
 			void resetSticksColor();
@@ -50,6 +54,7 @@ namespace Gameplay
 			float calculateStickHeight(int array_pos);
 
 			void processLinearSearch();
+			void processBinarySearch();
 
 			void processSearchThreadState();
 			void joinThreads();
